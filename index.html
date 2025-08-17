@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Overlay Image Example</title>
+  <!-- Prevent caching -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <style>
+    :root {
+      --on-opacity: 0.6;
+      --fade-ms: 200ms;
+      --slide-ms: 420ms;
+    }
+
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+      background: #000;
+    }
+
+    body::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: url("background.png");
+      background-size: cover;
+      background-position: center;
+      filter: blur(15px);
+      transform: scale(1.1);
+      z-index: -2;
+    }
+
+    .foreground {
+      position: absolute;
+      inset: 0;
+      background-image: url("background.png");
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      z-index: -1;
+    }
+
+    .beam {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0;
+      background: radial-gradient(ellipse at 50% 25%,
+                  rgba(255,255,255,0.35) 0%,
+                  rgba(255,255,255,0.15) 30%,
+                  rgba(255,255,255,0.06) 55%,
+                  rgba(255,255,255,0.0) 70%);
+      mix-blend-mode: screen;
+    }
+    .beam.on { animation: beamOn 1.2s ease forwards; }
+    .beam.off { animation: beamOff 0.4s ease forwards; }
+
+    @keyframes beamOn {
+      0% { opacity: 0; }
+      30% { opacity: 0.6; }
+      60% { opacity: 0.3; }
+      100% { opacity: 0.35; }
+    }
+    @keyframes beamOff {
+      0% { opacity: 0.35; }
+      30% { opacity: 0.5; }
+      60% { opacity: 0.15; }
+      100% { opacity: 0; }
+    }
+
+    .overlay-wrapper {
+      position: absolute;
+      top: 5vh;
+      left: 32.75vw;
+      width: 35.5vw;
+      height: clamp(40vh, 58vh, 65vh);
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      opacity: 0;
+      visibility: hidden;
+      transform: scale(1.05);
+      transition: opacity 0.3s ease;
+      cursor: zoom-in;
+    }
+    .overlay.on {
+      animation: projectorOn 1.2s ease forwards;
+    }
+    .overlay.off {
+      animation: projectorOff 0.4s ease forwards;
+    }
+    .overlay:hover {
+      opacity: 1 !important;
+    }
+
+    @keyframes projectorOn {
+      0% { opacity: 0; filter: brightness(0.5) blur(6px); transform: scale(1.05); }
+      30% { opacity: 0.9; filter: brightness(1.3) blur(4px); }
+      60% { opacity: 0.5; filter: brightness(0.9) blur(2px); }
+      100% { opacity: var(--on-opacity); filter: brightness(1) blur(0); transform: scale(1); visibility: visible; }
+    }
+    @keyframes projectorOff {
+      0% { opacity: var(--on-opacity); filter: brightness(1) blur(0); transform: scale(1); }
+      30% { opacity: 0.6; filter: brightness(1.2) blur(2px); }
+      60% { opacity: 0.3; filter: brightness(0.8) blur(4px); }
+      100% { opacity: 0; filter: brightness(0.5) blur(6px); transform: scale(1.05); visibility: hidden; }
+    }
+
+    .controls {
+      position: absolute;
+      bottom: 60px; /* moved up from 20px */
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      z-index: 3;
+    }
+
+    .toggle-btn, .nav-btn {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .toggle-btn {
+      width: 64px;
+      height: 64px;
+      border: none;
+      background-color: #1b1b1b;
+      color: #ffb300;
+      font-size: 28px;
+      box-shadow: 0 0 10px rgba(255,179,0,0.5), inset 0 0 6px rgba(255,179,0,0.25);
+      transition: background-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+    }
+    .toggle-btn:hover { background-color: #252525; }
+    .toggle-btn.on {
+      color: #00ff66;
+      box-shadow: 0 0 18px rgba(0,255,102,0.8), inset 0 0 6px rgba(0,255,102,0.4);
+    }
+
+    .nav-btn {
+      width: 52px;
+      height: 52px;
+      border: 1px solid #333;
+      background: #141414;
+      color: #ddd;
+      font-size: 24px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.4);
+      transition: transform 0.2s ease, background 0.25s ease, color 0.25s ease;
+    }
+    .nav-btn:hover { transform: scale(1.06); background:#1d1d1d; color:#fff; }
+    .nav-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  
+    /* Projector-style power on/off animations */
+    .overlay.startup { animation: projectorWarmup 1200ms ease-out 1; }
+    @keyframes projectorWarmup {
+      0%   { opacity: 0;            filter: blur(8px) brightness(0.35) contrast(0.85); }
+      20%  { opacity: 0.95;         filter: blur(5px) brightness(1.25) contrast(1.05); }
+      45%  { opacity: 0.45;         filter: blur(6px) brightness(0.75) contrast(0.95); }
+      70%  { opacity: 0.98;         filter: blur(2px) brightness(1.08) contrast(1.02); }
+      100% { opacity: var(--on-opacity); filter: none; }
+    }
+
+    .overlay.shutdown { animation: projectorShutdown 300ms ease-in 1 forwards; }
+    @keyframes projectorShutdown {
+      0%   { opacity: var(--on-opacity); filter: none; }
+      40%  { opacity: 0.25;            filter: blur(2px) brightness(0.7) contrast(0.95); }
+      100% { opacity: 0;               filter: blur(6px) brightness(0.35) contrast(0.85); }
+    }
+
+    /* Lightbox (full page overlay) */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.88);
+      backdrop-filter: blur(2px);
+      z-index: 9999;
+    }
+    .lightbox.open { display: flex; animation: lbFadeIn 180ms ease-out; }
+    @keyframes lbFadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .lightbox img {
+      max-width: 92vw;
+      max-height: 92vh;
+      border-radius: 10px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+      object-fit: contain;
+    }
+    .lightbox .close-btn {
+      position: absolute;
+      top: 16px;
+      right: 20px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1px solid #444;
+      background: #111;
+      color: #eee;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+    }
+    .lightbox .close-btn:hover { background:#1b1b1b; }
+  </style>
+</head>
+<body>
+  <div class="foreground"></div>
+  <div class="beam" id="beam"></div>
+  <div class="overlay-wrapper" id="overlayWrap">
+    <img src="#" alt="Overlay" class="overlay" id="overlayImg" aria-hidden="true">
+  </div>
+
+  <!-- Lightbox overlay -->
+  <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true">
+    <button class="close-btn" id="lbClose" aria-label="Close enlarged image">✕</button>
+    <img id="lbImg" alt="Enlarged overlay image">
+  </div>
+
+  <div class="controls" aria-label="Projector controls">
+    <button class="nav-btn" id="prevBtn" aria-label="Previous image">&#x2039;</button>
+    <button class="toggle-btn" id="powerBtn" aria-pressed="false" title="Power">⏻</button>
+    <button class="nav-btn" id="nextBtn" aria-label="Next image">&#x203A;</button>
+  </div>
+
+  <audio id="changeSound" src="change_image.mp3" preload="auto"></audio>
+  <audio id="powerOnSound" src="projector_on.mp3" preload="auto"></audio>
+
+  <script>
+    let isOn = false;
+    let isSliding = false;
+    let loopOnSegment = false; // loop projector_on.mp3 between 5s and 15s while ON
+
+    const wrap = document.getElementById('overlayWrap');
+    let active = document.getElementById('overlayImg');
+    const beam = document.getElementById('beam');
+    const btn = document.getElementById('powerBtn');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const changeSound = document.getElementById('changeSound');
+    const powerOnSound = document.getElementById('powerOnSound');
+
+    // Lightbox refs
+    const lightbox = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lbImg');
+    const lbClose = document.getElementById('lbClose');
+
+    const slides = [
+      'test0.jpg',
+      'test1.jpg',
+      'test2.jpg',
+      'test3.jpg'
+    ];
+    let index = 0;
+
+    function bust(url) {
+      const isHttp = /^https?:/i.test(location.protocol);
+      return isHttp ? `${url}${url.includes('?') ? '&' : '?'}v=${Date.now()}` : url;
+    }
+
+    function setImage(idx) {
+      index = (idx + slides.length) % slides.length;
+      active.src = bust(slides[index]);
+    }
+
+    function turnOn() {
+      const WARMUP_MS = 1200; // reduced slightly for quicker startup
+      beam.classList.add('on');
+      if (!active.getAttribute('src') || active.getAttribute('src') === '#') {
+        active.src = bust(slides[index]);
+      }
+      active.classList.add('on', 'startup');
+      btn.classList.add('on');
+      btn.setAttribute('aria-pressed', 'true');
+      active.setAttribute('aria-hidden', 'false');
+
+      // enable audio loop for the ON state (5s–15s)
+      loopOnSegment = true;
+      powerOnSound.currentTime = 0;
+      powerOnSound.play();
+
+      setTimeout(() => { if (active) active.classList.remove('startup'); }, WARMUP_MS);
+      isOn = true;
+    }
+
+    function turnOff() {
+      const SHUTDOWN_MS = 300; // keep in sync with CSS projectorShutdown duration
+
+      // stop looping and jump to shutdown segment (~24s)
+      loopOnSegment = false;
+      powerOnSound.currentTime = 24.0;
+      powerOnSound.play();
+
+      active.classList.add('shutdown');
+      setTimeout(() => {
+        active.classList.remove('on', 'shutdown');
+        beam.classList.remove('on');
+        btn.classList.remove('on');
+        btn.setAttribute('aria-pressed', 'false');
+        active.setAttribute('aria-hidden', 'true');
+        isOn = false;
+      }, SHUTDOWN_MS);
+    }
+
+    function toggleOverlay() { if (!isOn) turnOn(); else turnOff(); }
+    function nextImage() { setImage(index + 1); }
+    function prevImage() { setImage(index - 1); }
+
+    // --- Lightbox logic ---
+    function openLightbox() {
+      if (!isOn) return; // only enlarge when projector is on
+      lbImg.src = active.src;
+      lightbox.classList.add('open');
+      lightbox.setAttribute('aria-hidden', 'false');
+    }
+    function closeLightbox() {
+      lightbox.classList.remove('open');
+      lightbox.setAttribute('aria-hidden', 'true');
+    }
+
+    active.addEventListener('click', openLightbox);
+    lbClose.addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', (e) => {
+      // Close when clicking outside the image
+      if (e.target === lightbox) closeLightbox();
+    });
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeLightbox();
+    });
+
+    btn.addEventListener('click', toggleOverlay);
+    nextBtn.addEventListener('click', () => {
+      if (!isOn) turnOn();
+      nextImage();
+      changeSound.currentTime = 0.1; // start at 100ms
+      changeSound.play();
+    });
+    prevBtn.addEventListener('click', () => {
+      if (!isOn) turnOn();
+      prevImage();
+      changeSound.currentTime = 0.1; // start at 100ms
+      changeSound.play();
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        if (!isOn) turnOn();
+        nextImage();
+        changeSound.currentTime = 0.1; // start at 100ms
+        changeSound.play();
+      }
+      if (e.key === 'ArrowLeft')  {
+        e.preventDefault();
+        if (!isOn) turnOn();
+        prevImage();
+        changeSound.currentTime = 0.1; // start at 100ms
+        changeSound.play();
+      }
+      if (e.key === ' ' || e.key === 'Enter') {
+        const activeEl = document.activeElement;
+        if (activeEl === btn) { e.preventDefault(); toggleOverlay(); }
+      }
+    });
+
+    // Loop projector_on.mp3 between 5s and 15s while power is ON
+    powerOnSound.addEventListener('timeupdate', () => {
+      if (loopOnSegment && powerOnSound.currentTime >= 15) {
+        powerOnSound.currentTime = 5;
+        if (powerOnSound.paused) powerOnSound.play();
+      }
+    });
+
+    // Preload images & set initial
+    slides.forEach(src => { const img = new Image(); img.src = bust(src); });
+    active.src = bust(slides[index]);
+  </script>
+</body>
+</html>
