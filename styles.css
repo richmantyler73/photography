@@ -19,7 +19,7 @@ body::before {
     content: "";
     position: absolute;
     inset: 0;
-    background-image: url("jpg/background.png");
+    background-image: url("jpg/webpage/background.png");
     background-size: cover;
     background-position: center;
     filter: blur(15px);
@@ -30,7 +30,7 @@ body::before {
 .foreground {
     position: absolute;
     inset: 0;
-    background-image: url("jpg/background.png");
+    background-image: url("jpg/webpage/background.png");
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -213,4 +213,4 @@ body::before {
     cursor: pointer;
     box-shadow: 0 2px 10px rgba(0,0,0,0.4);
   }
-  .lightbox .close-btn:hover { background:#1b1b1b; }
+.lightbox .close-btn:hover { background:#1b1b1b; }

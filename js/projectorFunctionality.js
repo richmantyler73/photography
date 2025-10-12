@@ -16,12 +16,14 @@ const lightbox = document.getElementById('lightbox');
 const lbImg = document.getElementById('lbImg');
 const lbClose = document.getElementById('lbClose');
 
-const slides = [
-    'jpg/test0.JPG',
-    'jpg/test1.JPG',
-    'jpg/test2.JPG',
-    'jpg/test3.JPG'
-];
+const slides = imgdict.main;
+
+//const slides = [
+//    'jpg/test0.JPG',
+//    'jpg/test1.JPG',
+//    'jpg/test2.JPG',
+//    'jpg/test3.JPG'
+//];
 let index = 0;
 
 function bust(url) {
