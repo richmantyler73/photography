@@ -1,40 +1,916 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tyler Richman Photography</title>
-  <!-- Prevent caching -->
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Expires" content="0" />
-  <link rel="stylesheet" href="styles.css">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="description" content="Tyler Richman Photography — Home" />
+<title>Tyler Richman Photography</title>
+
+<style>
+  :root{
+    --bg0:#07080a;
+    --bg1:#0b0d12;
+    --text: rgba(255,255,255,0.92);
+    --muted: rgba(255,255,255,0.72);
+    --maxw: 1160px;
+    --pad: clamp(18px, 3vw, 28px);
+    --gap: clamp(14px, 2.8vw, 24px);
+    --navH: 74px;
+    --radius: 26px;
+    --shadow: 0 22px 70px rgba(0,0,0,0.62);
+  }
+
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; height:100%; background: var(--bg0); }
+  body{
+    margin:0;
+    min-height:100%;
+    color:var(--text);
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    overflow-x:hidden;
+    background:
+      radial-gradient(1200px 800px at 22% -10%, rgba(255,255,255,0.12), transparent 58%),
+      radial-gradient(900px 650px at 90% 0%, rgba(255,255,255,0.10), transparent 60%),
+      linear-gradient(180deg, var(--bg0), var(--bg1) 55%, #06070a);
+  }
+
+  a{ color:inherit; text-decoration:none; }
+  a:hover{ text-decoration:underline; }
+  img{ max-width:100%; display:block; }
+  button{ font:inherit; color:inherit; }
+
+  /* Skip link */
+  .skip-link{
+    position:absolute; left:-999px; top:12px;
+    background:#fff; color:#000;
+    padding:10px 14px; border-radius:10px;
+    z-index:1000;
+  }
+  .skip-link:focus{ left:12px; }
+
+  /* Film overlays */
+  .filmfx{
+    position:fixed; inset:0;
+    pointer-events:none;
+    z-index:1;
+  }
+  .filmfx::before{
+    content:"";
+    position:absolute; inset:-20%;
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='170' height='170'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='170' height='170' filter='url(%23n)' opacity='.35'/%3E%3C/svg%3E");
+    background-size: 260px 260px;
+    opacity: .085;
+    mix-blend-mode: overlay;
+    transform: translateZ(0);
+    animation: grain 9s steps(10) infinite;
+  }
+  .filmfx::after{
+    content:"";
+    position:absolute; inset:0;
+    background:
+      radial-gradient(1200px 850px at 50% 35%, transparent 35%, rgba(0,0,0,0.72) 92%),
+      linear-gradient(90deg, rgba(0,0,0,0.35), transparent 12%, transparent 88%, rgba(0,0,0,0.35));
+    opacity:.95;
+  }
+  .scratches{
+    position:fixed; inset:0;
+    pointer-events:none;
+    z-index:1;
+    opacity: .12;
+    mix-blend-mode: overlay;
+    background:
+      repeating-linear-gradient(90deg,
+        transparent 0 18px,
+        rgba(255,255,255,0.08) 18px 19px,
+        transparent 19px 45px),
+      repeating-linear-gradient(180deg,
+        transparent 0 90px,
+        rgba(255,255,255,0.05) 90px 91px,
+        transparent 91px 160px);
+    filter: blur(0.2px);
+    animation: scratches 10s linear infinite;
+  }
+  @keyframes grain{
+    0%{ transform: translate(0,0); }
+    10%{ transform: translate(-3%, -2%); }
+    20%{ transform: translate(-1%, 3%); }
+    30%{ transform: translate(2%, -1%); }
+    40%{ transform: translate(3%, 2%); }
+    50%{ transform: translate(-2%, 2%); }
+    60%{ transform: translate(-3%, 0%); }
+    70%{ transform: translate(0%, -3%); }
+    80%{ transform: translate(2%, 1%); }
+    90%{ transform: translate(-1%, -2%); }
+    100%{ transform: translate(0,0); }
+  }
+  @keyframes scratches{
+    0%{ transform: translateY(0); }
+    100%{ transform: translateY(-80px); }
+  }
+
+  /* Header */
+  header{
+    position:fixed; top:0; left:0; right:0;
+    height:var(--navH);
+    z-index:50;
+    backdrop-filter: blur(12px);
+    background: rgba(9,10,14,0.55);
+    border-bottom: 1px solid rgba(255,255,255,0.10);
+  }
+  .nav{
+    max-width: var(--maxw);
+    margin: 0 auto;
+    height: 100%;
+    padding: 0 var(--pad);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+  .brand{ display:grid; gap:2px; line-height:1.1; }
+  .brand strong{ font-size:1rem; letter-spacing:.2px; }
+  .brand span{ font-size:.86rem; color:var(--muted); display:inline-flex; align-items:center; gap:10px; }
+  .dot{
+    width:7px; height:7px; border-radius:999px;
+    background: rgba(255,255,255,0.78);
+    box-shadow: 0 0 0 6px rgba(255,255,255,0.10);
+  }
+
+  nav ul{
+    list-style:none;
+    margin:0; padding:0;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+  }
+  .navlink{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:10px 12px;
+    border-radius:14px;
+    border:1px solid transparent;
+    font-size:0.95rem;
+    transition: background 180ms ease, border-color 180ms ease, transform 180ms ease;
+  }
+  .navlink:hover{
+    border-color: rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.06);
+    text-decoration:none;
+    transform: translateY(-1px);
+  }
+  .navlink[aria-current="true"]{
+    border-color: rgba(255,255,255,0.28);
+    background: rgba(255,255,255,0.08);
+  }
+
+  /* Main / Sections */
+  main{ position:relative; z-index:2; scroll-snap-type: y mandatory; }
+  section{
+    min-height:100svh;
+    scroll-snap-align:start;
+    padding: calc(var(--navH) + 22px) var(--pad) 42px;
+    display:grid;
+    place-items:center;
+    position:relative;
+    isolation:isolate;
+  }
+  .wrap{ width:100%; max-width:var(--maxw); }
+
+  /* Shared type */
+  .grid{ display:grid; gap:var(--gap); align-items:center; }
+  .kicker{
+    letter-spacing:0.22em;
+    text-transform:uppercase;
+    font-size:0.78rem;
+    color: rgba(255,255,255,0.70);
+    margin:0 0 10px;
+  }
+  h1,h2{ margin:0 0 12px; letter-spacing:.2px; }
+  h1{ font-size: clamp(2.2rem, 4.4vw, 3.35rem); line-height:1.05; }
+  h2{ font-size: clamp(1.35rem, 2.8vw, 1.85rem); line-height:1.1; }
+  p{
+    margin:0;
+    color: rgba(255,255,255,0.82);
+    line-height:1.85;
+    max-width:78ch;
+  }
+
+  /* HERO */
+  #home{
+    background:
+      radial-gradient(900px 550px at 20% 15%, rgba(255,255,255,0.14), transparent 55%),
+      radial-gradient(1100px 700px at 70% 0%, rgba(255,255,255,0.10), transparent 60%),
+      linear-gradient(180deg, #07080a, #0b0d12 55%, #06070a);
+  }
+  #home::before{
+    content:"";
+    position:absolute; inset:0;
+    background:
+      radial-gradient(900px 380px at 20% 35%, rgba(255,255,255,0.10), transparent 60%),
+      conic-gradient(from 200deg at 12% 20%, rgba(255,255,255,0.06), transparent 35%, rgba(255,255,255,0.03), transparent 70%);
+    opacity:.9;
+    z-index:-1;
+    pointer-events:none;
+  }
+  .hero{ grid-template-columns: 1.05fr 0.95fr; }
+  .subtitle{
+    font-size: clamp(1rem, 2.1vw, 1.18rem);
+    color: rgba(255,255,255,0.76);
+    max-width: 66ch;
+    margin-top: 6px;
+  }
+
+  .film-tags{
+    margin-top: 16px;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .tag{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    padding: 10px 12px;
+    border-radius: 999px;
+    border: 1px dashed rgba(255,255,255,0.20);
+    background: rgba(0,0,0,0.10);
+    color: rgba(255,255,255,0.70);
+    font-size: 0.92rem;
+    backdrop-filter: blur(8px);
+  }
+  .tag .spool{
+    width: 8px; height: 8px; border-radius: 999px;
+    background: rgba(255,255,255,0.75);
+    box-shadow: 0 0 0 5px rgba(255,255,255,0.08);
+  }
+
+  .portrait{
+    width: min(560px, 100%);
+    aspect-ratio: 4 / 5;
+    border-radius: var(--radius);
+    overflow:hidden;
+    position:relative;
+    box-shadow: var(--shadow);
+  }
+  .portrait img{
+    width:100%; height:100%;
+    object-fit: cover;
+    filter: contrast(1.06) saturate(1.03) brightness(0.98);
+  }
+  .portrait::before{
+    content:"";
+    position:absolute; inset:0;
+    background:
+      radial-gradient(circle at 10px 14px, rgba(255,255,255,0.16) 0 3px, transparent 3.6px) 0 0 / 28px 28px,
+      radial-gradient(circle at calc(100% - 10px) 14px, rgba(255,255,255,0.16) 0 3px, transparent 3.6px) 0 0 / 28px 28px;
+    opacity:.55;
+    mix-blend-mode: overlay;
+    pointer-events:none;
+  }
+  .portrait::after{
+    content:"";
+    position:absolute; inset:0;
+    background: linear-gradient(180deg, rgba(0,0,0,0.05), rgba(0,0,0,0.48));
+    pointer-events:none;
+  }
+
+  /* ABOUT */
+  #about{
+    color: rgba(20,16,12,0.92);
+    background:
+      radial-gradient(1200px 850px at 20% 15%, rgba(0,0,0,0.10), transparent 55%),
+      linear-gradient(180deg, #f5efe6, #efe6d9 55%, #e9ddcf);
+  }
+  #about .kicker{ color: rgba(20,16,12,0.55); }
+  #about p{ color: rgba(20,16,12,0.78); }
+  #about h2{ color: rgba(20,16,12,0.92); }
+  #about .typewriter{
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+    letter-spacing: .2px;
+  }
+  .about-grid{
+    display:grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: var(--gap);
+    align-items:start;
+    margin-top: 12px;
+  }
+  .stamp{
+    margin-top: 6px;
+    padding: 14px 0 0;
+    border-top: 1px solid rgba(20,16,12,0.18);
+    color: rgba(20,16,12,0.68);
+    line-height: 1.7;
+    position:relative;
+  }
+  .stamp::before{
+    content:"APPROVED";
+    position:absolute;
+    top:-10px; right:0;
+    font-size:.78rem;
+    letter-spacing:.22em;
+    padding:6px 10px;
+    border: 1px solid rgba(20,16,12,0.35);
+    color: rgba(20,16,12,0.68);
+    transform: rotate(4deg);
+    border-radius: 8px;
+    background: rgba(255,255,255,0.35);
+  }
+
+  /* FEATURED */
+  #featured{
+    background:
+      radial-gradient(900px 700px at 18% 22%, rgba(255,255,255,0.12), transparent 62%),
+      radial-gradient(950px 750px at 82% 30%, rgba(255,255,255,0.08), transparent 64%),
+      radial-gradient(900px 750px at 55% 110%, rgba(255,255,255,0.06), transparent 66%),
+      radial-gradient(1200px 900px at 50% -10%, rgba(255,255,255,0.10), transparent 60%),
+      linear-gradient(180deg, #05060a, #0a0b12 55%, #04050a);
+  }
+  #featured::before{
+    content:"";
+    position:absolute; inset:0;
+    background:
+      radial-gradient(circle at 16% 38%, rgba(255,255,255,0.10) 0 2px, transparent 3px),
+      radial-gradient(circle at 28% 22%, rgba(255,255,255,0.08) 0 1.5px, transparent 3px),
+      radial-gradient(circle at 62% 30%, rgba(255,255,255,0.08) 0 1.6px, transparent 3px),
+      radial-gradient(circle at 74% 46%, rgba(255,255,255,0.07) 0 1.4px, transparent 3px),
+      radial-gradient(circle at 86% 24%, rgba(255,255,255,0.06) 0 1.2px, transparent 3px),
+      radial-gradient(circle at 40% 70%, rgba(255,255,255,0.06) 0 1.2px, transparent 3px),
+      radial-gradient(circle at 55% 82%, rgba(255,255,255,0.05) 0 1.1px, transparent 3px);
+    opacity: .55;
+    filter: blur(0.2px);
+    z-index:-1;
+    pointer-events:none;
+  }
+  #featured::after{
+    content:"";
+    position:absolute; inset:0;
+    background:
+      radial-gradient(900px 420px at 50% 0%, rgba(255,255,255,0.07), transparent 62%),
+      radial-gradient(1200px 900px at 50% 40%, transparent 50%, rgba(0,0,0,0.74) 94%),
+      linear-gradient(90deg, rgba(0,0,0,0.45), transparent 18%, transparent 82%, rgba(0,0,0,0.45));
+    opacity:.95;
+    z-index:-1;
+    pointer-events:none;
+  }
+
+  .slider{ margin-top: 16px; display:grid; gap: 14px; }
+
+  .stage{
+    position:relative;
+    border-radius: var(--radius);
+    overflow:hidden;
+    min-height: min(62vh, 590px);
+    background: rgba(0,0,0,0.14);
+    box-shadow: var(--shadow);
+  }
+  .stage::before{
+    content:"";
+    position:absolute; inset:0;
+    background:
+      radial-gradient(1200px 500px at 30% 0%, rgba(255,255,255,0.10), transparent 60%),
+      radial-gradient(1200px 900px at 50% 60%, transparent 52%, rgba(0,0,0,0.55) 92%),
+      linear-gradient(90deg, rgba(0,0,0,0.35), transparent 14%, transparent 86%, rgba(0,0,0,0.35));
+    opacity:.9;
+    pointer-events:none;
+    z-index:1;
+  }
+  .stage::after{
+    content:"";
+    position:absolute; inset:0;
+    background: linear-gradient(180deg, transparent 45%, rgba(0,0,0,0.72));
+    pointer-events:none;
+    z-index:1;
+  }
+  .stage img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    filter: contrast(1.06) saturate(1.03) brightness(0.98);
+    transform: scale(1.01);
+    transition: opacity 220ms ease;
+  }
+  .cap{
+    position:absolute;
+    left: 14px; right: 14px; bottom: 14px;
+    display:flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: baseline;
+    z-index: 2;
+  }
+  .cap strong{ font-size: 1.08rem; }
+  .cap span{
+    color: rgba(255,255,255,0.72);
+    font-size: 0.92rem;
+    white-space: nowrap;
+  }
+
+  .controls{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .arrow{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 999px;
+    border: 1px dashed rgba(255,255,255,0.22);
+    background: rgba(0,0,0,0.10);
+    cursor:pointer;
+    user-select:none;
+    backdrop-filter: blur(8px);
+    transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
+  }
+  .arrow:hover{
+    transform: translateY(-1px);
+    background: rgba(255,255,255,0.06);
+    border-color: rgba(255,255,255,0.30);
+  }
+  .dots{
+    display:flex;
+    gap: 8px;
+    align-items:center;
+    justify-content:center;
+    flex: 1 1 auto;
+    min-width: 160px;
+  }
+  .dotbtn{
+    width: 10px; height: 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.34);
+    background: rgba(255,255,255,0.12);
+    cursor:pointer;
+    padding:0;
+    transition: transform 160ms ease, background 160ms ease;
+  }
+  .dotbtn[aria-current="true"]{
+    background: rgba(255,255,255,0.86);
+    border-color: rgba(255,255,255,0.86);
+    transform: scale(1.2);
+  }
+  .framebar{
+    margin-top: 8px;
+    color: rgba(255,255,255,0.68);
+    display:flex;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-size: 0.93rem;
+  }
+  .framebar .mono{
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+    letter-spacing: .2px;
+  }
+
+  /* CONTACT */
+  #contact{
+    color: rgba(20,16,12,0.92);
+    background:
+      radial-gradient(1100px 750px at 18% 20%, rgba(0,0,0,0.08), transparent 60%),
+      radial-gradient(900px 650px at 85% 10%, rgba(0,0,0,0.06), transparent 60%),
+      linear-gradient(180deg, #f5efe6, #efe6d9 55%, #0b0d12);
+  }
+  #contact .kicker{ color: rgba(20,16,12,0.55); }
+  #contact p{ color: rgba(20,16,12,0.78); }
+  #contact h2{ color: rgba(20,16,12,0.92); }
+
+  .contact-grid{
+    display:grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: var(--gap);
+    margin-top: 12px;
+    align-items:start;
+  }
+  .contact-list{
+    margin-top: 14px;
+    display:grid;
+    gap: 10px;
+  }
+  .contact-item{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(20,16,12,0.16);
+  }
+  .contact-left{
+    display:flex;
+    align-items:center;
+    gap: 12px;
+    min-width: 0;
+  }
+  .cicon{
+    width: 40px; height: 40px;
+    border-radius: 999px;
+    display:grid;
+    place-items:center;
+    background: rgba(20,16,12,0.06);
+    border: 1px solid rgba(20,16,12,0.12);
+    font-weight: 800;
+    flex: 0 0 auto;
+  }
+  .contact-left strong{ display:block; line-height:1.15; }
+  .contact-left small{
+    display:block;
+    margin-top: 3px;
+    color: rgba(20,16,12,0.60);
+    font-size: 0.88rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 44ch;
+  }
+  .contact-actions{
+    display:flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content:flex-end;
+  }
+  .contact-btn{
+    display:inline-flex;
+    align-items:center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 999px;
+    border: 1px dashed rgba(20,16,12,0.22);
+    background: rgba(255,255,255,0.52);
+    cursor:pointer;
+    user-select:none;
+    transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
+    white-space: nowrap;
+  }
+  .contact-btn:hover{
+    transform: translateY(-1px);
+    background: rgba(255,255,255,0.72);
+    border-color: rgba(20,16,12,0.30);
+    text-decoration:none;
+  }
+  .footerline{
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(20,16,12,0.16);
+    display:flex;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    color: rgba(20,16,12,0.60);
+    font-size: 0.92rem;
+  }
+
+  /* Reveal */
+  .reveal{
+    opacity:0;
+    transform: translateY(10px);
+    transition: opacity 650ms ease, transform 650ms ease;
+  }
+  .reveal.is-visible{ opacity:1; transform: translateY(0); }
+
+  /* Responsive */
+  @media (max-width: 960px){
+    .hero{ grid-template-columns: 1fr; }
+    .about-grid{ grid-template-columns: 1fr; }
+    .contact-grid{ grid-template-columns: 1fr; }
+    .portrait{ width: min(620px, 100%); aspect-ratio: 3/4; }
+    .stage{ min-height: min(58vh, 520px); }
+    .contact-left small{ max-width: 34ch; }
+  }
+  @media (max-width: 560px){
+    nav ul{ gap: 6px; }
+    .navlink{ padding: 9px 10px; font-size: 0.93rem; }
+    .controls{ justify-content:center; }
+    .dots{ order:3; width:100%; justify-content:center; }
+    .contact-item{ align-items:flex-start; }
+    .contact-actions{ justify-content:flex-start; }
+    .contact-left small{ max-width: 26ch; }
+  }
+
+  @media (max-width: 760px){
+    section{ min-height:auto; }
+    main{ scroll-snap-type:none; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+    .navlink,.arrow,.dotbtn,.reveal,.contact-btn{ transition:none; }
+    .filmfx::before,.scratches{ animation:none; }
+    .stage img{ transition:none; }
+  }
+</style>
 </head>
+
 <body>
-  <div class="foreground"></div>
-  <div class="beam" id="beam"></div>
-  <div class="overlay-wrapper" id="overlayWrap">
-    <img src="#" alt="Overlay" class="overlay" id="overlayImg" aria-hidden="true">
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="filmfx" aria-hidden="true"></div>
+<div class="scratches" aria-hidden="true"></div>
+
+<header>
+  <div class="nav">
+    <div class="brand" aria-label="Site name">
+      <strong>Tyler Richman Photography</strong>
+      <span><span class="dot" aria-hidden="true"></span> Amateur Photographer</span>
+    </div>
+    <nav aria-label="Primary navigation">
+      <ul>
+        <li><a class="navlink" href="#home" data-nav="home" aria-current="true">Home</a></li>
+        <li><a class="navlink" href="blog.html" data-nav="blog">Blog</a></li>
+        <li><a class="navlink" href="#contact" data-nav="contact">Contact</a></li>
+      </ul>
+    </nav>
   </div>
+</header>
 
-  <script src="js/updateOverlayPosition.js"></script>
+<main id="main">
+  <!-- HERO -->
+  <section id="home" aria-label="Intro section">
+    <div class="wrap grid hero reveal">
+      <div>
+        <div class="kicker">Roll 01 • Frame 01</div>
+        <h1>Tyler Richman</h1>
+        <p class="subtitle">Amateur Photographer chasing nature's beauty.</p>
 
-  <!-- Lightbox overlay -->
-  <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true">
-    <button class="close-btn" id="lbClose" aria-label="Close enlarged image">✕</button>
-    <img id="lbImg" alt="Enlarged overlay image">
-  </div>
+        <div class="film-tags" aria-label="Highlights">
+          <span class="tag"><span class="spool" aria-hidden="true"></span> Landscapes • Nature</span>
+          <span class="tag"><span class="spool" aria-hidden="true"></span> Realistic</span>
+          <span class="tag"><span class="spool" aria-hidden="true"></span> Immersive</span>
+        </div>
+      </div>
 
-  <div class="controls" aria-label="Projector controls">
-    <button class="nav-btn" id="prevBtn" aria-label="Previous image">&#x2039;</button>
-    <button class="toggle-btn" id="powerBtn" aria-pressed="false" title="Power">⏻</button>
-    <button class="nav-btn" id="nextBtn" aria-label="Next image">&#x203A;</button>
-  </div>
+      <div class="portrait" aria-label="Portrait">
+        <img src="./img/portrait.jpg" alt="Portrait of Tyler Richman" loading="lazy" />
+      </div>
+    </div>
+  </section>
 
-  <audio id="changeSound" src="mp3/change_image.mp3" preload="auto"></audio>
-  <audio id="powerOnSound" src="mp3/projector_on.mp3" preload="auto"></audio>
+  <!-- ABOUT -->
+  <section id="about" aria-label="About me section">
+    <div class="wrap reveal">
+      <div class="kicker">Notes • Contact Sheet</div>
+      <h2 class="typewriter">Background & philosophy</h2>
 
-  <script src="js/imgdict.js"></script>
-  <script src="js/projectorFunctionality.js"></script>
+      <div class="about-grid">
+        <div>
+          <p class="typewriter">
+            I am an amateur photographer from North Carolina that has always been captivated by natural beauty. I bought my Nikon D750 in April 2020 to capture these incredible places. My photography journey has been a slow progression from occasional shoots to a dedicated hobby. My journey will be documented within my blog, be sure to check that out.
+            <br><br>
+            As someone who shoots with the intention of capturing nature’s beauty, I strive to ensure that my edits do not distort reality. I believe that composition of the objects present in nature is the primary storyteller of an image. I do make slight enhancements to the light and color saturation of my images to allow them to feel soft and immersive. This style best represents my values as a photographer but am very appreciative of different philosophies and perspectives, my own will continue to evolve.
+          </p>
+        </div>
+
+        <aside class="stamp typewriter" aria-label="Photography philosophy">
+          <strong>What I’m chasing</strong>
+          <div>
+            Natural beauty represented in a soft and immersive, but realistic manner.
+            <br><br>
+            Nature is the story. I’m just the teller.
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURED -->
+  <section id="featured" aria-label="Featured photos section">
+    <div class="wrap reveal">
+      <div class="kicker">Night Lab • Featured Frames</div>
+      <h2>Featured Photos</h2>
+      <p style="color: var(--muted); margin-top:-2px;">Use the arrows (or your keyboard) to browse.</p>
+
+      <div class="slider" aria-label="Featured photo slider">
+        <div class="stage">
+          <img id="sliderImg" src="" alt="" />
+          <div class="cap">
+            <strong id="sliderTitle">—</strong>
+            <span id="sliderMeta">—</span>
+          </div>
+        </div>
+
+        <div class="controls">
+          <button class="arrow" type="button" id="prevBtn" aria-label="Previous photo">← Prev</button>
+          <div class="dots" id="dots" aria-label="Slide dots"></div>
+          <button class="arrow" type="button" id="nextBtn" aria-label="Next photo">Next →</button>
+        </div>
+
+        <div class="framebar" aria-label="Frame counter">
+          <span class="mono" id="frameCounter">Frame 01 / 06</span>
+          <span class="mono">← → to advance</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" aria-label="Contact section">
+    <div class="wrap reveal">
+      <div class="kicker">Contact • Wrap</div>
+      <h2>Let’s connect</h2>
+
+      <div class="contact-grid">
+        <div>
+          <p>
+            For prints, collaborations, or questions, email me or reach out on social media.
+            I usually reply within a couple of days.
+          </p>
+
+          <div class="contact-list" aria-label="Contact methods">
+            <div class="contact-item">
+              <div class="contact-left">
+                <div class="cicon" aria-hidden="true">@</div>
+                <div>
+                  <strong>Email</strong>
+                  <small>richmantyler73@gmail.com</small>
+                </div>
+              </div>
+              <div class="contact-actions">
+                <a class="contact-btn" href="mailto:richmantyler73@gmail.com">Send</a>
+                <button class="contact-btn" type="button" id="copyEmailBtn" data-email="richmantyler73@gmail.com">Copy</button>
+              </div>
+            </div>
+
+            <div class="contact-item">
+              <div class="contact-left">
+                <div class="cicon" aria-hidden="true">IG</div>
+                <div>
+                  <strong>Instagram</strong>
+                  <small>@tyryrich_photography</small>
+                </div>
+              </div>
+              <div class="contact-actions">
+                <a class="contact-btn" href="https://www.instagram.com/tyryrich_photography" target="_blank" rel="noopener noreferrer">Open</a>
+              </div>
+            </div>
+
+            <div class="contact-item">
+              <div class="contact-left">
+                <div class="cicon" aria-hidden="true">FL</div>
+                <div>
+                  <strong>Flickr</strong>
+                  <small>/people/tyryrich_photography</small>
+                </div>
+              </div>
+              <div class="contact-actions">
+                <a class="contact-btn" href="https://www.flickr.com/people/tyryrich_photography" target="_blank" rel="noopener noreferrer">Open</a>
+              </div>
+            </div>
+
+            <div class="contact-item" style="border-bottom:none;">
+              <div class="contact-left">
+                <div class="cicon" aria-hidden="true">✎</div>
+                <div>
+                  <strong>Blog</strong>
+                  <small>Stories + process</small>
+                </div>
+              </div>
+              <div class="contact-actions">
+                <a class="contact-btn" href="blog.html">Read</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="footerline">
+            <span>© <span id="year"></span> Tyler Richman Photography</span>
+            <span id="copyEmailHint">Tip: click “Copy” to copy my email</span>
+          </div>
+        </div>
+
+        <div>
+          <p style="color: rgba(20,16,12,0.70);">
+            If you’re reaching out about prints, include the photo name (from the Featured section) and your preferred size.
+          </p>
+
+          <p style="margin-top:14px;color: rgba(20,16,12,0.60); line-height:1.7;">
+            I’m always looking for new places to shoot—coastlines, mountain overlooks, downtown streets at night, and any scene
+            with strong light and clean lines.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+  // Year
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  // Reveal
+  const revealEls = document.querySelectorAll(".reveal");
+  const revealObs = new IntersectionObserver((entries) => {
+    for (const e of entries) if (e.isIntersecting) e.target.classList.add("is-visible");
+  }, { threshold: 0.18 });
+  revealEls.forEach(el => revealObs.observe(el));
+
+  // Active nav highlighting (Home / Contact)
+  const navLinks = document.querySelectorAll(".navlink[data-nav]");
+  const trackSections = ["home", "contact"].map(id => document.getElementById(id)).filter(Boolean);
+
+  const setActive = (id) => {
+    navLinks.forEach(a => {
+      const active = a.getAttribute("data-nav") === id;
+      a.setAttribute("aria-current", active ? "true" : "false");
+    });
+  };
+
+  const sectionObs = new IntersectionObserver((entries) => {
+    let best = null;
+    for (const e of entries) if (!best || e.intersectionRatio > best.intersectionRatio) best = e;
+    if (best && best.isIntersecting) setActive(best.target.id);
+  }, { threshold: [0.2, 0.35, 0.5, 0.65] });
+
+  trackSections.forEach(s => sectionObs.observe(s));
+
+  // Copy email
+  const copyBtn = document.getElementById("copyEmailBtn");
+  const copyHint = document.getElementById("copyEmailHint");
+  copyBtn?.addEventListener("click", async () => {
+    const email = copyBtn.getAttribute("data-email") || "";
+    try{
+      await navigator.clipboard.writeText(email);
+      copyHint.textContent = "Copied to clipboard.";
+      setTimeout(() => copyHint.textContent = "Tip: click “Copy” to copy my email", 1800);
+    }catch{
+      window.prompt("Copy this email:", email);
+    }
+  });
+
+  // Slider data
+  const slides = [
+    { src: "./img/DSC_2691.jpg", title: "Fading to Night", meta: "North Topsail Beach, North Carolina" },
+    { src: "./img/DSC_3652.jpg", title: "Arctic Serenity", meta: "Iceland" },
+    { src: "./img/DSC_5111.jpg", title: "Canyon Peninsula", meta: "Canyonlands National Park, Utah" },
+    { src: "./img/DSC_5031.jpg", title: "Sunrise Tells the Story", meta: "Dispersed Camping Site near Moab, Utah" },
+    { src: "./img/DSC_3747.jpg", title: "Arctic Oasis", meta: "Iceland" },
+    { src: "./img/DSC_3512.jpg", title: "Urban Boom", meta: "Raleigh, North Carolina" },
+  ];
+
+  const imgEl = document.getElementById("sliderImg");
+  const titleEl = document.getElementById("sliderTitle");
+  const metaEl = document.getElementById("sliderMeta");
+  const prevBtn = document.getElementById("prevBtn");
+  const nextBtn = document.getElementById("nextBtn");
+  const dotsWrap = document.getElementById("dots");
+  const frameCounter = document.getElementById("frameCounter");
+
+  let idx = 0;
+
+  function renderDots(){
+    dotsWrap.innerHTML = "";
+    slides.forEach((_, i) => {
+      const b = document.createElement("button");
+      b.className = "dotbtn";
+      b.type = "button";
+      b.setAttribute("aria-label", `Go to slide ${i + 1}`);
+      b.setAttribute("aria-current", i === idx ? "true" : "false");
+      b.addEventListener("click", () => goTo(i));
+      dotsWrap.appendChild(b);
+    });
+  }
+
+  function updateCounter(){
+    const cur = String(idx + 1).padStart(2, "0");
+    const tot = String(slides.length).padStart(2, "0");
+    frameCounter.textContent = `Frame ${cur} / ${tot}`;
+  }
+
+  function goTo(newIdx){
+    idx = (newIdx + slides.length) % slides.length;
+    const s = slides[idx];
+
+    imgEl.style.opacity = "0";
+    setTimeout(() => {
+      imgEl.src = s.src;
+      imgEl.alt = s.title;
+      titleEl.textContent = s.title;
+      metaEl.textContent = s.meta;
+      imgEl.style.opacity = "1";
+      renderDots();
+      updateCounter();
+    }, 120);
+  }
+
+  prevBtn.addEventListener("click", () => goTo(idx - 1));
+  nextBtn.addEventListener("click", () => goTo(idx + 1));
+
+  // Keyboard navigation when Featured section is in view
+  window.addEventListener("keydown", (e) => {
+    const feat = document.getElementById("featured");
+    if (!feat) return;
+    const r = feat.getBoundingClientRect();
+    const inView = r.top < window.innerHeight * 0.6 && r.bottom > window.innerHeight * 0.4;
+    if (!inView) return;
+    if (e.key === "ArrowLeft") goTo(idx - 1);
+    if (e.key === "ArrowRight") goTo(idx + 1);
+  });
+
+  goTo(0);
+</script>
 </body>
 </html>

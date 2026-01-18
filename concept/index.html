@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tyler Richman Photography</title>
+  <!-- Prevent caching -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="foreground"></div>
+  <div class="beam" id="beam"></div>
+  <div class="overlay-wrapper" id="overlayWrap">
+    <img src="#" alt="Overlay" class="overlay" id="overlayImg" aria-hidden="true">
+  </div>
+
+  <script src="js/updateOverlayPosition.js"></script>
+
+  <!-- Lightbox overlay -->
+  <div class="lightbox" id="lightbox" aria-hidden="true" role="dialog" aria-modal="true">
+    <button class="close-btn" id="lbClose" aria-label="Close enlarged image">✕</button>
+    <img id="lbImg" alt="Enlarged overlay image">
+  </div>
+
+  <div class="controls" aria-label="Projector controls">
+    <button class="nav-btn" id="prevBtn" aria-label="Previous image">&#x2039;</button>
+    <button class="toggle-btn" id="powerBtn" aria-pressed="false" title="Power">⏻</button>
+    <button class="nav-btn" id="nextBtn" aria-label="Next image">&#x203A;</button>
+  </div>
+
+  <audio id="changeSound" src="mp3/change_image.mp3" preload="auto"></audio>
+  <audio id="powerOnSound" src="mp3/projector_on.mp3" preload="auto"></audio>
+
+  <script src="js/imgdict.js"></script>
+  <script src="js/projectorFunctionality.js"></script>
+</body>
+</html>
