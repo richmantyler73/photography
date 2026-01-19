@@ -621,9 +621,26 @@
     </div>
     <nav aria-label="Primary navigation">
       <ul>
-        <li><a class="navlink" href="#home" data-nav="home" aria-current="true">Home</a></li>
-        <li><a class="navlink" href="blog.html" data-nav="blog">Blog</a></li>
-        <li><a class="navlink" href="#contact" data-nav="contact">Contact</a></li>
+        <li>
+          <a class="navlink" href="#home" data-nav="home" aria-current="true">
+            Home
+          </a>
+        </li>
+        <li>
+          <a class="navlink" href="#about" data-nav="about">
+            Philosophy
+          </a>
+        </li>
+        <li>
+          <a class="navlink" href="#featured" data-nav="featured">
+            Featured
+          </a>
+        </li>
+        <li>
+          <a class="navlink" href="#contact" data-nav="contact">
+            Connect
+          </a>
+        </li>
       </ul>
     </nav>
   </div>
@@ -660,18 +677,18 @@
       <div class="about-grid">
         <div>
           <p class="typewriter">
-            I am an amateur photographer from North Carolina that has always been captivated by natural beauty. I bought my Nikon D750 in April 2020 to capture these incredible places. My photography journey has been a slow progression from occasional shoots to a dedicated hobby. My journey will be documented within my blog, be sure to check that out.
+            I am an amateur photographer residing near Raleigh, North Carolina that has always been captivated by nature’s beauty. I bought my Nikon D750 in April 2020 to capture these incredible places. My photography journey has been a slow progression from occasional shoots to a dedicated hobby. My journey will be documented within my blog coming soon, be sure to check that out.
             <br><br>
-            As someone who shoots with the intention of capturing nature’s beauty, I strive to ensure that my edits do not distort reality. I believe that composition of the objects present in nature is the primary storyteller of an image. I do make slight enhancements to the light and color saturation of my images to allow them to feel soft and immersive. This style best represents my values as a photographer but am very appreciative of different philosophies and perspectives, my own will continue to evolve.
+            As someone who shoots with the intention of capturing nature’s beauty, I strive to ensure that my edits do not distort reality. I believe the objects present in nature are the primary composers of an image’s story. I do make slight enhancements to the light and color saturation of my images to allow them to feel immersive. This style best represents my values as a photographer, but I am very appreciative of different philosophies and perspectives, my own will continue to evolve.
           </p>
         </div>
 
         <aside class="stamp typewriter" aria-label="Photography philosophy">
           <strong>What I’m chasing</strong>
           <div>
-            Natural beauty represented in a soft and immersive, but realistic manner.
+            Nature's beauty represented in an immersive but realistic manner.
             <br><br>
-            Nature is the story. I’m just the teller.
+            Nature is the story. I am the teller.
           </div>
         </aside>
       </div>
@@ -731,7 +748,6 @@
                 </div>
               </div>
               <div class="contact-actions">
-                <a class="contact-btn" href="mailto:richmantyler73@gmail.com">Send</a>
                 <button class="contact-btn" type="button" id="copyEmailBtn" data-email="richmantyler73@gmail.com">Copy</button>
               </div>
             </div>
@@ -758,10 +774,10 @@
                 </div>
               </div>
               <div class="contact-actions">
-                <a class="contact-btn" href="https://www.flickr.com/people/tyryrich_photography" target="_blank" rel="noopener noreferrer">Open</a>
+                <a class="contact-btn" href="https://www.flickr.com/people/204099211@N03" target="_blank" rel="noopener noreferrer">Open</a>
               </div>
             </div>
-
+            <!--
             <div class="contact-item" style="border-bottom:none;">
               <div class="contact-left">
                 <div class="cicon" aria-hidden="true">✎</div>
@@ -775,7 +791,7 @@
               </div>
             </div>
           </div>
-
+          -->
           <div class="footerline">
             <span>© <span id="year"></span> Tyler Richman Photography</span>
             <span id="copyEmailHint">Tip: click “Copy” to copy my email</span>
@@ -810,7 +826,7 @@
 
   // Active nav highlighting (Home / Contact)
   const navLinks = document.querySelectorAll(".navlink[data-nav]");
-  const trackSections = ["home", "contact"].map(id => document.getElementById(id)).filter(Boolean);
+  const trackSections = ["home", "about", "featured", "contact"].map(id => document.getElementById(id)).filter(Boolean);
 
   const setActive = (id) => {
     navLinks.forEach(a => {
@@ -843,12 +859,12 @@
 
   // Slider data
   const slides = [
-    { src: "./img/DSC_2691.jpg", title: "Fading to Night", meta: "North Topsail Beach, North Carolina" },
+    { src: "./img/DSC_2691.jpg", title: "Fading to Night", meta: "North Topsail Beach, North Carolina, USA" },
     { src: "./img/DSC_3652.jpg", title: "Arctic Serenity", meta: "Iceland" },
-    { src: "./img/DSC_5111.jpg", title: "Canyon Peninsula", meta: "Canyonlands National Park, Utah" },
-    { src: "./img/DSC_5031.jpg", title: "Sunrise Tells the Story", meta: "Dispersed Camping Site near Moab, Utah" },
-    { src: "./img/DSC_3747.jpg", title: "Arctic Oasis", meta: "Iceland" },
-    { src: "./img/DSC_3512.jpg", title: "Urban Boom", meta: "Raleigh, North Carolina" },
+    { src: "./img/DSC_5111.jpg", title: "Canyon Peninsula", meta: "Canyonlands National Park, Utah, USA" },
+    { src: "./img/DSC_5031.jpg", title: "Sunrise Tells the Story", meta: "Dispersed Camping Site near Moab, Utah, USA" },
+    { src: "./img/DSC_3747.jpg", title: "Chill Oasis", meta: "Iceland" },
+    { src: "./img/DSC_5642.jpg", title: "Canyon Valley", meta: "Bryce Canyon National Park, Utah, USA" },
   ];
 
   const imgEl = document.getElementById("sliderImg");
